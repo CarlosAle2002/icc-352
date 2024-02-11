@@ -5,7 +5,6 @@ public class Comentario {
     private String comentario;
     private Usuario autor;
 
-    // Constructor
     public Comentario(long id, String comentario, Usuario autor) {
         this.id = id;
         this.comentario = comentario;

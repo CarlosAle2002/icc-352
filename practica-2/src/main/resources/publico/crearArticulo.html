@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pagina de crear articulo" />
+    <meta name="author" content="Carlos Mena" />
     <title>Crear Articulo</title>
     <!-- Bootstrap core CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
@@ -16,15 +18,15 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <!-- Removed the script tag and its content -->
                 <li class="nav-item nav-item-usuario"><a class="nav-link active" id="username-nav" aria-current="page" href="user.html">Usuario</a></li>
                 <li class="nav-item nav-item-login"><a class="nav-link active" id = "login-nav" aria-current="page" href="login.html">Login</a></li>
                 <li class="nav-item nav-item-registrar-usuario"><a class="nav-link active"  id="registrarUsuario-nav" aria-current="page" href="registrarUsuario.html">Registrar Usuario</a></li>
+                <li class="nav-item nav-item-crear-articulo"><a class="nav-link active" id="crearArticulo-nav" aria-current="page" href="crearArticulo.html">Crear Articulo</a></li>
             </ul>
         </div>
     </div>
 </nav>
-<!-- Page content-->
+
 <div class="container">
     <div class="row justify-content-md-center">
         <div class="col-md-6">
@@ -48,7 +50,6 @@
     </div>
 </div>
 
-<!-- Footer-->
 <footer>
     <div class="container">
         <p class="m-0"> </p>
@@ -56,21 +57,17 @@
 </footer>
 
 <script>
-    // Hacer una solicitud GET al servidor para obtener los datos del usuario
-    // Aqui tambien se estara inciando la app con un usuario administrador por defecto
-    fetch('/obtener-datos-usuario')
+    fetch('/obtenerUsuario')
         .then(resp => {
             if (resp.ok) {
-                return resp.json(); // Convertir la respuesta a JSON
+                return resp.json();
             } else {
                 throw new Error('Error al obtener los datos del usuario');
             }
         })
         .then(usuario => {
-            // Procesar los datos del usuario recibidos
             console.log('Datos del usuario recibidos:', usuario);
 
-            //Cargar datos
             if(usuario.username != 'null') {
                 document.getElementById('username-nav').textContent = usuario.username;
             }
@@ -101,18 +98,15 @@
         })
         .catch(error => {
             console.error('Error al recibir los datos del usuario:', error);
-            // Manejar el error de alguna manera
         });
 </script>
 
-<!-- Bootstrap core JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
     function creaArticulo() {
-        // Puedes agregar lógica adicional aquí para procesar el formulario
         event.preventDefault();
 
         var titulo = document.getElementById("articleTitle").value;

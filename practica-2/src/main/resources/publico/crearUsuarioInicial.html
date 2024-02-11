@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Pagina de creacion de usuario inicial" />
+    <meta name="author" content="Carlos Mena" />
+    <title>Registrar Usuario Inicial</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container mt-4">
+    <h2>Registrar Usuario</h2>
+    <form id="loginForm">
+        <div class="mb-3">
+            <label for="username" class="form-label">Usuario:</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">Nombre:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Contraseña:</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary" onclick="enviarFormulario()">Registrar</button>
+    </form>
+</div>
+</body>
+<script>
+    function enviarFormulario() {
+        event.preventDefault();
+
+        var username = document.getElementById("username").value;
+        var name = document.getElementById("name").value;
+        var password = document.getElementById("password").value;
+
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "http://localhost:7000/registrarUsuarioInicial", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                window.location.href = "/index.html";
+            }
+        };
+        xhttp.send("username=" + username + "&name=" + name + "&password=" + password);
+    }
+</script>
+</html>

@@ -1,9 +1,7 @@
 package Logico;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
-import org.jetbrains.annotations.NotNull;
 import com.google.gson.Gson;
-
 
 import java.util.*;
 
@@ -12,14 +10,7 @@ public class Main {
     public static void main(String[] args) {
         String loginUrl = "http://localhost:7000/";
         Controladora.getInstance();
-        Usuario usuarioAdmin = new Usuario("CarlosAle","Carlos","12345678",true,true);
-        Usuario usuario = new Usuario("Juan","Karlos","1111",false,false);
-        Controladora.getInstance().agregarUsuario(usuario);
-        Controladora.getInstance().setUserLogeado(usuarioAdmin);
-        Controladora.getInstance().agregarUsuario(usuarioAdmin);
 
-
-        //Controladora.actualizarUsuario(usuario);
         var app = Javalin.create(config ->
                 {
                     config.staticFiles.add(staticFileConfig -> {
@@ -29,20 +20,26 @@ public class Main {
                         staticFileConfig.precompress = false;
                         staticFileConfig.aliasCheck = null;
                     });
-
                 })
                 .start(7000);
+        app.get("/", ctx -> ctx.redirect("/crearUsuarioInicial.html"));
 
+        app.post("/registrarUsuarioInicial", ctx -> {
+            String username = ctx.formParam("username");
+            String name = ctx.formParam("name");
+            String password = ctx.formParam("password");
 
+            Usuario user = new Usuario(username, name, password, true, true);
+            Controladora.getInstance().agregarUsuario(user);
+            Controladora.getInstance().setUserLogeado(user);
+        });
 
         app.post("/login", ctx -> {
-            // Obtener los parámetros enviados en la solicitud POST
             String username = ctx.formParam("username");
             String password = ctx.formParam("password");
 
-
             int resp = Controladora.validarUsuario(username,password,Controladora.getInstance().getListaUsuarios());
-            System.out.println(resp);
+
             if (resp != 0) {
                 ctx.sessionAttribute("username", username);
                 ctx.sessionAttribute("password", password);
@@ -83,14 +80,14 @@ public class Main {
             ctx.json(user.getNombre());
         });
 
-        app.get("/obtener-datos-usuario", ctx -> {
+        app.get("/obtenerUsuario", ctx -> {
 
             String usuarioJson = convertirUsuarioAJson(Controladora.getInstance().getUserLogueado());
 
             ctx.json(usuarioJson);
         });
 
-        app.get("/obtener-datos-articulo", ctx -> {
+        app.get("/obtenerArticulo", ctx -> {
 
             Articulo articulo = Controladora.getInstance().getArticuloSeleccionado();
             List<Comentario> comentarios = articulo.getListaComentarios();
@@ -151,8 +148,6 @@ public class Main {
             Controladora.getInstance().setArticuloSeleccionado(null);
             Controladora.getInstance().getListaArticulo().remove(articulo);
         });
-
-
     }
 
     private static String convertirComentariosAJson(Articulo articulo) {

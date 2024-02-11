@@ -7,7 +7,6 @@ public class Usuario {
     private boolean administrador;
     private boolean autor;
 
-    // Constructor
     public Usuario(String username, String nombre, String password, boolean administrador, boolean autor) {
         this.username = username;
         this.nombre = nombre;
@@ -16,7 +15,6 @@ public class Usuario {
         this.autor = autor;
     }
 
-    // Getter y Setter para username
     public String getUsername() {
         return username;
     }
@@ -25,7 +23,6 @@ public class Usuario {
         this.username = username;
     }
 
-    // Getter y Setter para nombre
     public String getNombre() {
         return nombre;
     }
@@ -34,7 +31,6 @@ public class Usuario {
         this.nombre = nombre;
     }
 
-    // Getter y Setter para password
     public String getPassword() {
         return password;
     }
@@ -43,7 +39,6 @@ public class Usuario {
         this.password = password;
     }
 
-    // Getter y Setter para administrador
     public boolean isAdministrador() {
         return administrador;
     }
@@ -52,7 +47,6 @@ public class Usuario {
         this.administrador = administrador;
     }
 
-    // Getter y Setter para autor
     public boolean isAutor() {
         return autor;
     }

@@ -25,7 +25,6 @@ public class Articulo {
         this.listaEtiqueta = listaEtiqueta;
     }
 
-    // Getter y Setter para id
     public long getId() {
         return id;
     }
@@ -34,7 +33,6 @@ public class Articulo {
         this.id = id;
     }
 
-    // Getter y Setter para titulo
     public String getTitulo() {
         return titulo;
     }
@@ -43,7 +41,6 @@ public class Articulo {
         this.titulo = titulo;
     }
 
-    // Getter y Setter para cuerpo
     public String getCuerpo() {
         return cuerpo;
     }
@@ -52,7 +49,6 @@ public class Articulo {
         this.cuerpo = cuerpo;
     }
 
-    // Getter y Setter para autor
     public Usuario getAutor() {
         return autor;
     }
@@ -61,7 +57,6 @@ public class Articulo {
         this.autor = autor;
     }
 
-    // Getter y Setter para fecha
     public Date getFecha() {
         return fecha;
     }
@@ -70,7 +65,6 @@ public class Articulo {
         this.fecha = fecha;
     }
 
-    // Getter y Setter para listaComentarios
     public List<Comentario> getListaComentarios() {
         return listaComentarios;
     }
@@ -79,7 +73,6 @@ public class Articulo {
         this.listaComentarios = listaComentarios;
     }
 
-    // Getter y Setter para listaEtiqueta
     public List<Etiqueta> getListaEtiqueta() {
         return listaEtiqueta;
     }

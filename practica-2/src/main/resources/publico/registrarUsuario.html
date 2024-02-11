@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Pagina de registro de usuarios" />
+    <meta name="author" content="Carlos Mena" />
     <title>Registrar Usuario</title>
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <!-- Core theme CSS (includes Bootstrap)-->
@@ -14,7 +16,6 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <!-- Removed the script tag and its content -->
                 <li class="nav-item nav-item-usuario"><a class="nav-link active" id="username-nav" aria-current="page" href="user.html">Usuario</a></li>
                 <li class="nav-item nav-item-login"><a class="nav-link active" id = "login-nav" aria-current="page" href="login.html">Login</a></li>
                 <li class="nav-item nav-item-registrar-usuario"><a class="nav-link active"  id="registrarUsuario-nav" aria-current="page" href="registrarUsuario.html">Registrar Usuario</a></li>
@@ -23,7 +24,7 @@
         </div>
     </div>
 </nav>
-<!-- Page header with logo and tagline-->
+
 <div class="container mt-4">
     <h2>Registrar Usuario</h2>
     <form id="loginForm">
@@ -53,7 +54,6 @@
 </body>
 <script>
     function enviarFormulario() {
-        // Puedes agregar lógica adicional aquí para procesar el formulario
         event.preventDefault();
 
         var username = document.getElementById("username").value;
@@ -77,21 +77,17 @@
 </script>
 
 <script>
-    // Hacer una solicitud GET al servidor para obtener los datos del usuario
-    // Aqui tambien se estara inciando la app con un usuario administrador por defecto
-    fetch('/obtener-datos-usuario')
+    fetch('/obtenerUsuario')
         .then(resp => {
             if (resp.ok) {
-                return resp.json(); // Convertir la respuesta a JSON
+                return resp.json();
             } else {
                 throw new Error('Error al obtener los datos del usuario');
             }
         })
         .then(usuario => {
-            // Procesar los datos del usuario recibidos
             console.log('Datos del usuario recibidos:', usuario);
 
-            //Cargar datos
             if(usuario.username != 'null') {
                 document.getElementById('username-nav').textContent = usuario.username;
             }
@@ -122,7 +118,6 @@
         })
         .catch(error => {
             console.error('Error al recibir los datos del usuario:', error);
-            // Manejar el error de alguna manera
         });
 </script>
 </html>

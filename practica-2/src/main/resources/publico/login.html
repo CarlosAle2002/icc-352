@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Pagina de inicio de sesion" />
+    <meta name="author" content="Carlos Mena" />
     <title>Login</title>
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <!-- Core theme CSS (includes Bootstrap)-->
@@ -14,18 +16,16 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <!-- Removed the script tag and its content -->
                 <li class="nav-item nav-item-usuario"><a class="nav-link active" id="username-nav" aria-current="page" href="user.html">Usuario</a></li>
                 <li class="nav-item nav-item-login"><a class="nav-link active" id = "login-nav" aria-current="page" href="login.html">Login</a></li>
                 <li class="nav-item nav-item-registrar-usuario"><a class="nav-link active"  id="registrarUsuario-nav" aria-current="page" href="registrarUsuario.html">Registrar Usuario</a></li>
+                <li class="nav-item nav-item-crear-articulo"><a class="nav-link active" id="crearArticulo-nav" aria-current="page" href="crearArticulo.html">Crear Articulo</a></li>
             </ul>
         </div>
     </div>
 </nav>
-<!-- Page header with logo and tagline-->
 <div class="container mt-4">
     <h2>Login</h2>
-    <!--<form id="loginForm" onsubmit="verificarUsuario(event)">-->
     <form>
         <div class="mb-3">
             <label for="username" class="form-label">Usuario:</label>
@@ -54,7 +54,6 @@
             if (this.readyState == 4 && this.status == 200) {
                 var resp = JSON.parse(this.responseText);
 
-                // Procesar el valor de resp según tus necesidades
                 if (resp !== 0) {
                     localStorage.setItem("username-nav", username);
                     if(resp === 1 || resp === 2){
@@ -72,56 +71,20 @@
 
         xhttp.send("username=" + username + "&password=" + password);
     }
-    async function verificarUsuario(event) {
-        event.preventDefault(); // Evita que el formulario se envíe de manera convencional
-
-        const usernameInput = document.getElementById("username").value;
-        const passwordInput = document.getElementById("password").value;
-
-        try {
-            const resp = await fetch("http://localhost:7000/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: "username=" + usernameInput + "&password=" + passwordInput
-            });
-
-            if (resp.ok) {
-                const result = await resp.json();
-                alert(result);
-                if (result.success){
-                    alert("Inicio de sesión exitoso");
-                    window.location.href = "index.html";
-                }
-                else{
-                    alert("Usuario o contraseña incorrectos");
-                }
-            } else {
-                alert("Error en la solicitud");
-            }
-        } catch (error) {
-            console.error("Error al realizar la solicitud POST:", error);
-        }
-    }
 </script>
 
 <script>
-    // Hacer una solicitud GET al servidor para obtener los datos del usuario
-    // Aqui tambien se estara inciando la app con un usuario administrador por defecto
-    fetch('/obtener-datos-usuario')
+    fetch('/obtenerUsuario')
         .then(resp => {
             if (resp.ok) {
-                return resp.json(); // Convertir la respuesta a JSON
+                return resp.json();
             } else {
                 throw new Error('Error al obtener los datos del usuario');
             }
         })
         .then(usuario => {
-            // Procesar los datos del usuario recibidos
             console.log('Datos del usuario recibidos:', usuario);
 
-            //Cargar datos
             if(usuario.username != 'null') {
                 document.getElementById('username-nav').textContent = usuario.username;
             }
@@ -152,7 +115,6 @@
         })
         .catch(error => {
             console.error('Error al recibir los datos del usuario:', error);
-            // Manejar el error de alguna manera
         });
 </script>
 
