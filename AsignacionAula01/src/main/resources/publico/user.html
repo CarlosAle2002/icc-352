@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Pagina de usuario" />
+    <meta name="author" content="Carlos Mena" />
+    <title>Usuario</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">Home</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item nav-item-usuario"><a class="nav-link active" id="username-nav" aria-current="page" href="user.html">Usuario</a></li>
+                <li class="nav-item nav-item-login"><a class="nav-link active" id = "login-nav" aria-current="page" href="login.html">Login</a></li>
+                <li class="nav-item nav-item-registrar-usuario"><a class="nav-link active"  id="registrarUsuario-nav" aria-current="page" href="registrarUsuario.html">Registrar Usuario</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title text-center">Datos del Usuario</h2>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            mostrarInformacionUsuario();
+                        });
+                        function mostrarInformacionUsuario() {
+                            var nombreUsuario = localStorage.getItem('username-nav');
+
+                            var userContainer = document.createElement('div');
+
+                            userContainer.innerHTML = '<p><strong>Username: </strong>' + nombreUsuario +'</p>';
+
+                            document.querySelector('.card-body').appendChild(userContainer);
+
+                        }
+                        window.onload = function() {
+
+                        };
+                    </script>
+                </div>
+                <button type="submit" class="btn btn-primary"  onclick= "logout()">Cerrar sesión</button>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="py-5 bg-dark fixed-bottom">
+    <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p></div>
+</footer>
+
+<script>
+    function logout(){
+        event.preventDefault();
+
+        var username = localStorage.getItem('username');
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "http://localhost:7000/logout", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+
+                localStorage.setItem('username-nav', null);
+
+                window.location.href = "/index.html";
+            } else {
+                alert("Usuario deslogueado correctamente");
+            }
+        };
+        xhttp.send("username=" + username);
+    }
+</script>
+
+<script>
+    fetch('/obtenerUsuario')
+        .then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                throw new Error('Error al obtener los datos del usuario');
+            }
+        })
+        .then(usuario => {
+            console.log('Datos del usuario recibidos:', usuario);
+
+            if(usuario.username != 'null') {
+                document.getElementById('username-nav').textContent = usuario.username;
+            }
+
+            localStorage.setItem('username-nav', usuario.username);
+
+            var navItemLogin = document.querySelector('.nav-item-login');
+            var navItemUsuario = document.querySelector('.nav-item-usuario');
+
+
+            if(usuario.username == 'null') {
+                navItemLogin.style.display = 'block';
+                navItemUsuario.style.display = 'none';
+            } else {
+                navItemLogin.style.display = 'none';
+                navItemUsuario.style.display = 'block';
+            }
+
+        })
+        .catch(error => {
+            console.error('Error al recibir los datos del usuario:', error);
+        });
+</script>
+
+</body>
+</html>
