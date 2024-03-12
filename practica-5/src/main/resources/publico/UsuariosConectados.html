@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios Conectados</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tus estilos CSS personalizados -->
+    <link href="css/styles.css" rel="stylesheet">
+    <style>
+        /* Estilos para que el chat ocupe la parte derecha de la pantalla */
+        #chat-container {
+            position: fixed;
+            top: 100px; /* Altura de la barra de navegación */
+            left: 0;
+            bottom: 0;
+            width: 400px; /* Ancho del chat */
+            background-color: #f9f9f9;
+            border-right: 1px solid #ccc;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        #messages {
+            max-height: calc(100% - 60px); /* Altura máxima del contenedor de mensajes */
+            overflow-y: auto;
+        }
+
+        #messageForm {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+
+        /* Ajuste del margen derecho del contenido principal */
+        .main-content {
+            margin-left: 420px; /* Ancho del chat más un espacio adicional */
+        }
+
+        /* Establecer el ancho de los botones de sesión */
+        .btn-sesion {
+            width: 50%; /* Establece el ancho al 50% de su contenedor */
+        }
+
+        /* Estilo para el texto del botón seleccionado */
+        #selected-button-text {
+            position: fixed;
+            top: 60px; /* Altura de la barra de navegación */
+            left: 10px;
+            font-size: 16px;
+        }
+
+        .message {
+            display: block;
+            padding: 5px 10px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+        }
+
+        .server-message {
+            background-color: #d3d3d3;
+            text-align: left;
+        }
+
+        .user-message {
+            background-color: #99ccff;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">C&V Blog</a>
+        <!-- Agrega tu barra de navegación si es necesaria -->
+    </div>
+</nav>
+
+<!-- Texto del botón seleccionado -->
+<div id="selected-button-text" class="container mt-3">
+    <!-- Aquí se mostrará el texto del botón seleccionado -->
+</div>
+
+<div class="container mt-5 main-content">
+    <h1 class="mb-4">Usuarios Conectados</h1>
+    <div id="usuarios-conectados" class="row">
+        <!-- Aquí se mostrarán los usuarios conectados -->
+    </div>
+</div>
+
+<!-- Contenedor del chat -->
+<div id="chat-container">
+    <div id="messages">
+        <ul id="lista-mensajes">
+            <!-- Mensajes se agregarán aquí -->
+        </ul>
+    </div>
+
+    <!-- Formulario para enviar mensajes -->
+    <form id="messageForm" class="input-group mt-3" method="POST">
+        <input type="text" class="form-control" id="messageInput" name="message" placeholder="Escribe un mensaje..." />
+        <button type="button" class="btn btn-primary" onclick="enviarMensajeAlServidor()">Enviar</button>
+    </form>
+</div>
+
+<script>
+    function sandia(){
+        //enviar los mensajes desde el servidor javalin mejor
+        var messageInput = document.getElementById('messageInput').value;
+
+        fetch('/sandia', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'mensaje': messageInput
+            }),
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Mensaje enviado correctamente al servidor.');
+                    // Limpiar el campo de entrada después de enviar el mensaje
+                    document.getElementById('messageInput').value = '';
+                } else {
+                    console.error('Error al enviar el mensaje al servidor.');
+                }
+            })
+            .catch(error => {
+                console.error('Error de red:', error);
+            });
+    }
+
+    // Esta función envía el mensaje al servidor cuando se hace clic en el botón "Enviar"
+    function enviarMensajeAlServidor() {
+        sandia();
+    }
+    function handleUsername(username) {
+        alert('El nombre de usuario es: ' + username);
+        enviarUsernameAlServidor(username);
+    }
+
+    function enviarUsernameAlServidor(username) {
+        const datos = {
+            username: username
+        };
+
+        document.cookie = "cookieforchat=" + username;
+
+        fetch('/enviar-username', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datos)
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Nombre de usuario enviado correctamente al servidor.');
+                    obtenerMensajes();
+                } else {
+                    console.error('Error al enviar el nombre de usuario al servidor.');
+                }
+            })
+            .catch(error => {
+                console.error('Error de red:', error);
+            });
+    }
+
+    function usuariosConectados() {
+        fetch('/usuariosConectados')
+            .then(response => response.json())
+            .then(data => {
+                const contenedorUsuarios = document.getElementById('usuarios-conectados');
+                contenedorUsuarios.innerHTML = '';
+
+                data.forEach(usuario => {
+                    const botonUsuario = document.createElement('button');
+                    botonUsuario.textContent = usuario.username;
+                    botonUsuario.setAttribute('id', usuario.sesionId);
+                    botonUsuario.classList.add('btn', 'btn-primary', 'mb-2', 'me-2', 'btn-sesion');
+                    botonUsuario.addEventListener('click', () => {
+                        const username = usuario.username;
+                        handleUsername(username);
+                        const selectedButtonText = document.getElementById('selected-button-text');
+                        selectedButtonText.textContent = botonUsuario.textContent + usuario.sesionId;
+                    });
+                    contenedorUsuarios.appendChild(botonUsuario);
+                });
+            })
+            .catch(error => {
+                console.error('Error al obtener la lista de usuarios:', error);
+            });
+    }
+
+    setInterval(usuariosConectados, 1000);
+    function obtenerMensajes() {
+        fetch('/enviar-mensajes-admin')
+            .then(response => response.json())
+            .then(data => {
+                // Limpiar los mensajes existentes
+                document.getElementById('messages').innerHTML = '';
+
+                // Mostrar los mensajes recibidos
+                data.forEach(message => {
+                    var messageElement = document.createElement('div');
+                    messageElement.textContent = message.contenido;
+
+                    // Asignar la clase adecuada según el valor de isFromServer
+                    if (message.isFromServer) {
+                        messageElement.className = 'message server-message'; // Clase para mensajes del servidor
+                        messageElement.style.textAlign = 'left'; // Alinear mensajes del servidor a la izquierda
+                        messageElement.style.backgroundColor = '#d3d3d3'; // Color de fondo para mensajes del servidor
+
+                    } else {
+
+                        messageElement.className = 'message user-message';
+                        messageElement.style.textAlign = 'right'; // Alinear mensajes del servidor a la izquierda
+                        messageElement.style.backgroundColor = '#99ccff'; // Color de fondo para mensajes del servidor
+
+                    }
+
+                    document.getElementById('messages').appendChild(messageElement);
+                });
+
+                // Desplazar el scroll al final del contenedor de mensajes
+                var messagesContainer = document.getElementById('messages');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            })
+            .catch(error => console.error('Error al obtener los mensajes:', error));
+    }
+
+    /*
+    function obtenerMensajes() {
+        fetch('/enviar-mensajes-admin')
+            .then(response => response.json())
+            .then(data => {
+                const listaMensajes = document.getElementById('lista-mensajes');
+                listaMensajes.innerHTML = '';
+
+                data.forEach(mensaje => {
+
+
+
+                    var messageElement = document.createElement('div');
+                    messageElement.textContent = mensaje.contenido;
+
+                    // Asignar la clase adecuada según el valor de isFromServer
+                    if (mensaje.isFromServer) {
+                        messageElement.className = 'message server-message'; // Clase para mensajes del servidor
+                        messageElement.style.textAlign = 'left'; // Alinear mensajes del servidor a la izquierda
+                        messageElement.style.backgroundColor = '#d3d3d3'; // Color de fondo para mensajes del servidor
+
+                    } else {
+
+                        messageElement.className = 'message user-message';
+                        messageElement.style.textAlign = 'right'; // Alinear mensajes del servidor a la izquierda
+                        messageElement.style.backgroundColor = '#99ccff'; // Color de fondo para mensajes del servidor
+
+                    }
+
+                    document.getElementById('messages').appendChild(messageElement);
+
+
+                    /*
+                    const li = document.createElement('li');
+                    li.textContent = mensaje.contenido;
+                    listaMensajes.appendChild(li);
+                    //*
+
+                });
+            })
+            .catch(error => console.error('Error al obtener mensajes:', error));
+    }
+*/
+    setInterval(obtenerMensajes, 1000);
+
+    function sendMessage() {
+        var messageInput = document.getElementById('messageInput').value;
+
+        fetch('/enviar-mensaje-cliente', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'mensaje': messageInput
+            }),
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Mensaje enviado correctamente al servidor.');
+                } else {
+                    console.error('Error al enviar el mensaje al servidor.');
+                }
+            })
+            .catch(error => {
+                console.error('Error de red:', error);
+            });
+    }
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

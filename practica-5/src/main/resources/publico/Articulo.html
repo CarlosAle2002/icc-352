@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Pagina de articulo" />
+    <meta name="author" content="Carlos Mena" />
+    <title>Articulo</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <style>
+        .container {
+            max-width: 800px;
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+        }
+        .card {
+            margin-top: 20px;
+        }
+        .fecha-Post {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .titulo-Post {
+            font-size: 2rem;
+            margin-top: 10px;
+        }
+        .contenido-Post {
+            font-size: 1.1rem;
+            margin-top: 20px;
+        }
+        .autor-Post {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+        .etiqueta-Post {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+        .comentario-input {
+            margin-top: 20px;
+        }
+        .comentar-btn {
+            margin-top: 10px;
+        }
+
+
+        /* Estilos para el chat */
+        #chat-container {
+            position: absolute;
+            top: 70px;
+            right: 40px; /* Ajusta la posición a la derecha */
+            width: 300px; /* Ancho del contenedor del chat */
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            height: calc(100vh - 100px); /* Altura del contenedor del chat */
+            overflow-y: auto;
+        }
+
+
+
+        #messages {
+            max-height: calc(100% - 50px); /* Altura máxima del contenedor de mensajes */
+            overflow-y: auto;
+            padding-bottom: 10px; /* Espacio para el formulario de enviar mensajes */
+        }
+
+
+        #messageForm {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            display: flex;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background-color: #e2f7fb;
+            clear: both;
+        }
+        .user-message {
+            float: right;
+            background-color: #d4e8ec;
+        }
+        .server-message {
+            float: left;
+            background-color: #d3d3d3;
+        }
+        #nameForm {
+            margin-bottom: 10px;
+        }
+
+        #messageForm input[type="text"] {
+            width: 80%;
+            /* Otros estilos si los necesitas */
+
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">C&V Blog</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item nav-item-usuario"><a class="nav-link active" id="username-link-nav" aria-current="page" href="usuario.html">Usuario</a></li>
+                <li class="nav-item nav-item-login"><a class="nav-link active" id = "login-nav" aria-current="page" href="login.html">Login</a></li>
+                <li class="nav-item nav-item-registrar-usuario"><a class="nav-link active"  id="registrarUsuario-nav" aria-current="page" href="RegUser.html">Registrar Usuario</a></li>
+                <li class="nav-item nav-item-crear-articulo"><a class="nav-link active" id="crearArticulo-nav" aria-current="page" href="CrearArticulo.html">Crear Articulo</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Contenedor de comentarios -->
+            <div id="comentarios-container">
+                <!-- Comentarios serán insertados aquí -->
+            </div>
+
+            <!-- Contenedor del chat -->
+            <div id="chat-container">
+                <!-- Formulario para enviar mensajes -->
+                <div id="nameForm">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="nameInput" placeholder="Ingresa tu nombre" />
+                        <button class="btn btn-primary" onclick="submitName()">Enviar Nombre</button>
+                    </div>
+                </div>
+
+                <div id="messageForm" style="display: none;">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="messageInput" placeholder="Escribe un mensaje..." />
+                        <button class="btn btn-primary" onclick="sendMessage(document.getElementById('messageInput').value)">Enviar</button>
+                    </div>
+                </div>
+
+                <!-- Contenedor de los mensajes -->
+                <div id="messages">
+                    <!-- Mensajes se agregan aquí -->
+                </div>
+            </div>
+
+            <!-- Resto del contenido -->
+            <button type="submit" class="btn btn-primary btn-block btn-modificar" id="modificar" onclick="Modificar()">Modificar Articulo</button>
+            <button type="submit" class="btn btn-primary btn-block btn-eliminar" id="eliminar" onclick="Eliminar()">Eliminar Articulo</button>
+            <div class="card mb-4" id="articulo-container">
+                <div class="card-body" id="articulo-body">
+                    <h2 class="card-title text-center">Datos del Articulo</h2>
+                </div>
+            </div>
+            <div class="form-group mt-3">
+                <input type="text" class="form-control comentario-input" id="Comentar-Input" name="Comentarios">
+                <button type="submit" class="btn btn-primary mt-2 comentar-btn" id="Comentar-Btn">Comentar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/main.js"></script>
+
+<script>
+    fetch('/obtenerArticulo')
+        .then(resp => resp.json())
+        .then(respuesta => {
+            var contenedor = document.getElementById('articulo-body');
+            var articulo = respuesta.articulo;
+            var autor = respuesta.nombreAutor;
+            localStorage.setItem("autorArticulo", autor);
+            var etiquetas = respuesta.etiquetas;
+            var fechaArticulo = new Date(articulo.fecha);
+            var dia = fechaArticulo.getDate();
+            var mes = fechaArticulo.getMonth() + 1;
+            var ano = fechaArticulo.getFullYear();
+            var titulo = articulo.titulo;
+            var cuerpo = articulo.cuerpo;
+            var comentarios = respuesta.comentarios;
+            var comentariosContainer = document.getElementById('comentarios-container');
+
+            var cantComent = respuesta.cantidadComentarios;
+
+            var articuloVista = `<div class="small text-muted fecha-Post"><strong>Fecha: </strong>${dia}/${mes}/${ano}</div>
+                                    <h2 class="card-title titulo-Post"><strong>Titulo: </strong>${titulo}</h2>
+                                    <p class="card-text contenido-Post"><strong>Cuerpo: </strong>${cuerpo}</p>
+                                    <p class="card-text autor-Post"><strong>Autor: </strong>${autor}</p>
+                                    <p class="card-text etiqueta-Post"><strong>Etiquetas: </strong>${etiquetas}</p></div>`;
+            contenedor.innerHTML = articuloVista;
+
+            function createClickListener() {
+                var comentario = document.getElementById("Comentar-Input").value;
+
+                var xhttp = new XMLHttpRequest();
+                xhttp.open("POST", "http://localhost:7000/crearComentario", true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var nuevoComentario = JSON.parse(this.responseText);
+
+                        var nuevoComentarioVista = `<div class="card-body">
+                                        <p class="card-text autor-Post"><strong>Autor: </strong>${nuevoComentario.autorName}</p>
+                                        <p class="card-text contenido-Post"><strong>Contenido: </strong>${nuevoComentario.comentario}</p>
+                                    </div>`;
+
+                        comentariosContainer.innerHTML += nuevoComentarioVista;
+
+                        document.getElementById("Comentar-Input").value = "";
+                    }
+                };
+                xhttp.send("Comentario=" + comentario);
+
+            }
+            var ComentarBtn = document.getElementById('Comentar-Btn');
+            if(ComentarBtn){
+                ComentarBtn.addEventListener('click', createClickListener);
+            }
+            for (var i = 0; i < cantComent; i++) {
+                var comentario = comentarios[i];
+                var comentarioVista = `<div class="card-body">
+                                        <p class="card-text autor-Post"><strong>Autor: </strong>${comentario.autor.username}</p>
+                                        <p class="card-text contenido-Post"><strong>Contenido: </strong>${comentario.comentario}</p>
+                                   </div>`;
+                comentariosContainer.innerHTML += `<div>${comentarioVista}</div>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+</script>
+
+<!--<script>
+    fetch('/obtenerUsuario')
+        .then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                throw new Error('Error al obtener los datos del usuario');
+            }
+        })
+        .then(usuario => {
+            console.log('Datos del usuario recibidos:', usuario);
+
+            if(usuario.username != 'null') {
+                document.getElementById('username-nav').textContent = usuario.username;
+            }
+
+            localStorage.setItem('username-nav', usuario.username);
+            localStorage.setItem('nombre', usuario.nombre);
+            localStorage.setItem('administrador', usuario.administrador);
+            localStorage.setItem('autor', usuario.autor);
+
+            var navItemRegistrarUsuario = document.querySelector('.nav-item-registrar-usuario');
+            var navItemLogin = document.querySelector('.nav-item-login');
+            var navItemUsuario = document.querySelector('.nav-item-usuario');
+            var navItemCrearArticulo = document.querySelector('.nav-item-crear-articulo');
+            var btnModificar = document.querySelector('.btn-modificar');
+            var btnEliminar = document.querySelector('.btn-eliminar');
+            var ComentarBtn = document.getElementById('Comentar-Btn');
+            var ComentarInput = document.getElementById('Comentar-Input');
+
+            if (usuario.administrador === true) {
+                navItemRegistrarUsuario.style.display = 'block';
+            } else {
+                navItemRegistrarUsuario.style.display = 'none';
+            }
+            var autorArticulo = localStorage.getItem("autorArticulo");
+            if(usuario.username == autorArticulo || usuario.administrador == true){
+                btnEliminar.style.display='block';
+                btnModificar.style.display='block';
+            } else {
+                btnEliminar.style.display='none';
+                btnModificar.style.display='none';
+            }
+
+            if(usuario.autor === true || usuario.administrador === true) {
+                navItemCrearArticulo.style.display = 'block';
+                ComentarBtn.style.display = 'block';
+                ComentarInput.style.display = 'block';
+
+            } else {
+                navItemCrearArticulo.style.display = 'none';
+                ComentarBtn.style.display = 'none';
+                ComentarInput.style.display = 'none';
+            }
+
+            if(usuario.username == 'null') {
+                navItemLogin.style.display = 'block';
+                navItemUsuario.style.display = 'none';
+            } else {
+                navItemLogin.style.display = 'none';
+                navItemUsuario.style.display = 'block';
+            }
+
+        })
+        .catch(error => {
+            console.error('Error al recibir los datos del usuario:', error);
+        });
+</script>-->
+
+<script>
+    function Modificar() {
+        window.location.href = "modificarArticulo.html";
+    }
+</script>
+
+<script>
+    function Eliminar(){
+        event.preventDefault();
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "http://localhost:7000/eliminarArticulo");
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                window.location.href = "/index.html";
+            }
+        };
+        xhttp.send("Eliminar");
+    }
+</script>
+
+<script>
+    fetch('/obtenerUsuario')
+        .then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                throw new Error('Error al obtener los datos del usuario');
+            }
+        })
+        .then(usuario => {
+            var username = usuario.username;
+            var nombre = usuario.nombre;
+            var admin = usuario.administrador;
+            var autor = usuario.autor;
+            console.log('Datos del usuario recibidos:', usuario);
+
+            if(username != null) {
+                document.getElementById('username-link-nav').textContent = usuario.username;
+            }
+            console.log(username);
+
+            localStorage.setItem('username-nav', username);
+            localStorage.setItem('nombre', nombre);
+            localStorage.setItem('administrador', admin);
+            localStorage.setItem('autor', autor);
+
+            var navItemRegistrarUsuario = document.getElementById('registrarUsuario-nav');
+            var navItemLogin = document.getElementById('login-nav');
+            var navItemUsuario = document.getElementById('username-nav');
+            var navItemCrearArticulo = document.getElementById('crearArticulo-nav');
+            var btnModificar = document.getElementById('modificar');
+            var btnEliminar = document.getElementById('eliminar');
+            var btnComentar = document.getElementById('Comentar-Btn');
+            var inputComentar = document.getElementById('Comentar-Input');
+
+            if (admin === true) {
+                navItemRegistrarUsuario.style.display = 'block';
+            } else {
+                navItemRegistrarUsuario.style.display = 'none';
+            }
+
+            if(autor === true || admin === true) {
+
+                navItemCrearArticulo.style.display = 'block';
+                btnModificar.style.display = 'block';
+                btnEliminar.style.display = 'block';
+                btnComentar.style.display = 'block';
+                inputComentar.style.display = 'block';
+            } else {
+                navItemCrearArticulo.style.display = 'none';
+                btnModificar.style.display = 'none';
+                btnEliminar.style.display = 'none';
+                btnComentar.style.display = 'none';
+                inputComentar.style.display = 'none';
+            }
+
+            if(username == null) {
+                navItemLogin.style.display = 'block';
+                navItemUsuario.style.display = 'none';
+            } else {
+                navItemLogin.style.display = 'none';
+                navItemUsuario.style.display = 'block';
+            }
+
+        })
+        .catch(error => {
+            console.error('Error al recibir los datos del usuario:', error);
+        });
+</script>
+
+
+
+
+
+
+<script>
+
+    function fetchMessages() {
+        fetch('/enviar-mensajes-index')
+            .then(response => response.json())
+            .then(data => {
+                // Limpiar los mensajes existentes
+                document.getElementById('messages').innerHTML = '';
+
+                // Mostrar los mensajes recibidos
+                data.forEach(message => {
+                    var messageElement = document.createElement('div');
+                    messageElement.textContent = message.contenido;
+
+                    // Asignar la clase adecuada según el valor de isFromServer
+                    if (message.isFromServer) {
+                        messageElement.className = 'message server-message';
+                    } else {
+                        messageElement.className = 'message user-message';
+                    }
+
+                    document.getElementById('messages').appendChild(messageElement);
+                });
+
+                // Desplazar el scroll al final del contenedor de mensajes
+                var messagesContainer = document.getElementById('messages');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            })
+            .catch(error => console.error('Error al obtener los mensajes:', error));
+
+
+        // window.onload = fetchMessages;
+
+    }
+    setInterval(fetchMessages, 1000);
+    function sendMessageVisual() {
+        var name = localStorage.getItem('username');
+        if (!name) return; // Si no hay nombre, no enviar mensajes
+
+        var message = document.getElementById('messageInput').value.trim();
+        if (message === '') return; // Si el mensaje está vacío, no hacer nada
+
+        var messageElement = document.createElement('div');
+        messageElement.textContent = message;
+        messageElement.className = 'message user-message';
+
+        document.getElementById('messages').appendChild(messageElement);
+        document.getElementById('messageInput').value = '';
+
+        websocket.send(message); // Aquí, 'websocket' es tu objeto WebSocket
+    }
+
+    // Función para enviar el nombre del usuario
+    // Función para enviar el nombre del usuario
+    function submitName() {
+        var name = document.getElementById('nameInput').value.trim();
+        if (name === '') return; // Si el nombre está vacío, no hacer nada
+
+        localStorage.setItem('username', name); // Guardar el nombre en el almacenamiento local
+        document.getElementById('nameForm').style.display = 'none'; // Ocultar el formulario de nombre
+
+        // Mostrar el formulario de mensajes
+        document.getElementById('messageForm').style.display = 'block';
+    }
+
+
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var buscarEtiquetaBtn = document.getElementById('btn-buscarEtiqueta');
+
+        function buscarEtiqueta() {
+            var etiqueta = document.getElementById("etiquetaBuscar").value;
+            console.log("Etiqueta enviada: " + etiqueta);
+            filtroActual = etiqueta || null;
+            var url = etiqueta ? '/cargarArticulosEtiqueta/' + etiqueta : '/cargarArticulos';
+            if(filtroActual != null) {
+                fetch(url)
+                    .then(resp => {
+                        if (resp.ok) {
+                            return resp.json();
+                        } else {
+                            throw new Error('Error al obtener los datos del post');
+                        }
+                    })
+                    .then(respuesta => {
+                        var blogsContainer = document.getElementById('blogsContainer');
+                        var blogsInfo = respuesta.articulos.reverse();
+                        var etiquetas = respuesta.etiquetas.reverse();
+
+                        var articulosPorPagina = 5;
+                        var paginasTotales = Math.ceil(blogsInfo.length / articulosPorPagina);
+
+                        function mostrarArticulosPagina(pagina) {
+                            blogsContainer.innerHTML = '';
+
+                            var inicio = pagina * articulosPorPagina;
+                            var fin = Math.min(inicio + articulosPorPagina, blogsInfo.length);
+
+                            for (var i = inicio; i < fin; i++) {
+                                var blog = blogsInfo[i];
+                                var blogDiv = document.createElement('div');
+                                var fechaArticulo = new Date(blog.fecha);
+                                var dia = fechaArticulo.getDate();
+                                var mes = fechaArticulo.getMonth() + 1;
+                                var ano = fechaArticulo.getFullYear();
+
+                                var primerasPalabras = blog.cuerpo.split(" ").slice(0, 70).join(" ");
+
+                                blogDiv.className = 'card mb-4';
+
+                                blogDiv.innerHTML = `
+                                     <div class="card-body">
+                            <div class="small text-muted fecha-Post" id="fecha">${dia}/${mes}/${ano}</div>
+                            <h2 class="card-title titulo-Post" id="titulo">${blog.titulo}</h2>
+                            <p class="card-text contenido-Post" id="contenido">${primerasPalabras}</p>
+                            <p class="card-text etiqueta-Post" id="etiqueta">${etiquetas[i]}</p>
+                            <a class="btn btn-primary btn-leermas" data-articulo-id="${blog.id}">Leer mas →</a>
+                        </div>
+                                `;
+
+                                blogsContainer.appendChild(blogDiv);
+
+                                var leerMasBtn = blogDiv.querySelector('.btn-leermas');
+                            }
+                        }
+
+                        var paginaActual = 0;
+
+                        function actualizarPaginacion() {
+                            document.querySelector('.pagination').innerHTML = '';
+
+                            for (var i = 0; i < paginasTotales; i++) {
+                                var paginaItem = document.createElement('li');
+                                paginaItem.className = 'page-item';
+                                paginaItem.innerHTML = `<a class="page-link" href="#" data-pagina="${i}">${i + 1}</a>`;
+                                document.querySelector('.pagination').appendChild(paginaItem);
+
+                                paginaItem.addEventListener('click', function (event) {
+                                    event.preventDefault();
+                                    paginaActual = parseInt(event.target.getAttribute('data-pagina'));
+                                    mostrarArticulosPagina(paginaActual);
+                                });
+                            }
+                        }
+
+                        mostrarArticulosPagina(paginaActual);
+                        actualizarPaginacion();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            } else {
+                location.reload();
+            }
+        }
+
+        buscarEtiquetaBtn.addEventListener('click', buscarEtiqueta);
+    });
+</script>
+
+<script>
+    var filtroActual; // Declarar la variable globalmente
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var blogsContainer = document.getElementById('blogsContainer');
+        var paginationContainer = document.querySelector('.pagination');
+        var paginaActual = 0;
+        var articulosPorPagina = 5;
+
+        function cargarArticulos(pagina) {
+            fetch('/cargarArticulos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ pagina: pagina, filtro: filtroActual })
+            })
+                .then(resp => {
+                    if (resp.ok) {
+                        return resp.json();
+                    } else {
+                        throw new Error('Error al obtener los datos del post');
+                    }
+                })
+                .then(respuesta => {
+                    console.log('Respuesta del servidor:', respuesta);
+                    var blogsInfo = respuesta.articulos;
+                    var etiquetas = respuesta.etiquetas;
+
+                    blogsContainer.innerHTML = '';
+                    blogsInfo.forEach(function(blog, index) {
+                        var blogDiv = document.createElement('div');
+                        var fechaArticulo = new Date(blog.fecha);
+                        var dia = fechaArticulo.getDate();
+                        var mes = fechaArticulo.getMonth() + 1;
+                        var ano = fechaArticulo.getFullYear();
+
+                        var primerasPalabras = blog.cuerpo.split(" ").slice(0, 70).join(" ");
+
+                        blogDiv.className = 'card mb-4';
+                        blogDiv.innerHTML = `
+                        <div class="card-body">
+                            <div class="small text-muted fecha-Post">${dia}/${mes}/${ano}</div>
+                            <h2 class="card-title titulo-Post">${blog.titulo}</h2>
+                            <p class="card-text contenido-Post">${primerasPalabras}</p>
+                            <p class="card-text etiqueta-Post">${etiquetas[index]}</p>
+                            <a class="btn btn-primary btn-leermas" data-id="${blog.id}">Leer mas →</a>
+                        </div>
+                    `;
+
+                        blogsContainer.appendChild(blogDiv);
+                    });
+
+                    actualizarPaginacion(respuesta.cantidad);
+                })
+                .catch(error => {
+                    console.error('Error al cargar y mostrar artículos:', error);
+                });
+        }
+
+        function actualizarPaginacion(cantidadArticulos) {
+            var paginasTotales = Math.ceil(cantidadArticulos / articulosPorPagina);
+            paginationContainer.innerHTML = '';
+
+            for (var i = 0; i < paginasTotales; i++) {
+                var paginaItem = document.createElement('li');
+                paginaItem.className = 'page-item';
+                paginaItem.innerHTML = `<a class="page-link" href="#" data-pagina="${i}">${i + 1}</a>`;
+                paginationContainer.appendChild(paginaItem);
+            }
+        }
+
+        paginationContainer.addEventListener('click', function(event) {
+            event.preventDefault();
+            if (event.target.tagName === 'A') {
+                paginaActual = parseInt(event.target.getAttribute('data-pagina'));
+                cargarArticulos(paginaActual);
+            }
+        });
+
+        // Cargar la primera página de artículos
+        cargarArticulos(paginaActual);
+
+        // Evento para cargar artículo completo
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('btn-leermas')) {
+                event.preventDefault(); // Prevenir el comportamiento por defecto del enlace
+
+                // Obtener el ID del artículo del atributo data-id
+                const articleId = event.target.getAttribute('data-id');
+
+                // Enviar una solicitud al servidor con el ID del artículo
+                fetch('/cargar-articulo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: articleId })
+                })
+                    .then(response => {
+                        // Manejar la respuesta del servidor
+                        if (response.ok) {
+                            // Redirigir a la página de detalle del artículo
+                            window.location.href = 'Articulo.html';
+                        } else {
+                            console.error('Error al cargar el artículo');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al enviar la solicitud al servidor:', error);
+                    });
+            }
+        });
+    });
+</script>
+
+<script>
+
+    fetch('/obtenerUsuario')
+        .then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                throw new Error('Error al obtener los datos del usuario');
+            }
+        })
+        .then(usuario => {
+            var username = usuario.username;
+            var nombre = usuario.nombre;
+            var admin = usuario.administrador;
+            var autor = usuario.autor;
+            console.log('Datos del usuario recibidos:', usuario);
+
+            if(username != null) {
+                document.getElementById('username-link-nav').textContent = usuario.username;
+            }
+            console.log(username);
+
+            localStorage.setItem('username-nav', username);
+            localStorage.setItem('nombre', nombre);
+            localStorage.setItem('administrador', admin);
+            localStorage.setItem('autor', autor);
+
+            var navItemRegistrarUsuario = document.getElementById('registrarUsuario-nav');
+            var navItemLogin = document.getElementById('login-nav');
+            var navItemUsuario = document.getElementById('username-link-nav');
+            var navItemCrearArticulo = document.getElementById('crearArticulo-nav');
+
+            var enlaceTUTI = document.getElementById('connectUser'); /* NEW */
+
+            if (admin === true) {
+                navItemRegistrarUsuario.style.display = 'block';
+                enlaceTUTI.style.display = 'block';
+
+
+            } else {
+                navItemRegistrarUsuario.style.display = 'none';
+                enlaceTUTI.style.display = 'none';
+
+            }
+
+            if(autor === true || admin === true) {
+                navItemCrearArticulo.style.display = 'block';
+                enlaceTUTI.style.display = 'block';
+
+            } else {
+                navItemCrearArticulo.style.display = 'none';
+                enlaceTUTI.style.display = 'none';
+
+            }
+
+            if(username == null) {
+                navItemLogin.style.display = 'block';
+                navItemUsuario.style.display = 'none';
+            } else {
+                navItemLogin.style.display = 'none';
+                navItemUsuario.style.display = 'block';
+            }
+
+
+
+
+        })
+        .catch(error => {
+            // OCULTAR NUEVA VENTANA
+            var enlaceTUTI = document.getElementById('connectUser'); /* NEW */
+            enlaceTUTI.style.display = 'none';
+
+
+            // OCULTAR DEMAS COSAS
+            var navItemRegistrarUsuario = document.getElementById('registrarUsuario-nav');
+            var navItemCrearArticulo = document.getElementById('crearArticulo-nav');
+
+            navItemRegistrarUsuario.style.display = 'none';
+            navItemCrearArticulo.style.display = 'none';
+
+            console.error('Error al recibir los datos del usuario:', error);
+        });
+
+</script>
+
+<script>
+    function fetchMessages() {
+        fetch('/enviar-mensajes')
+            .then(response => response.json())
+            .then(data => {
+                // Limpiar los mensajes existentes
+                document.getElementById('messages').innerHTML = '';
+
+                // Mostrar los mensajes recibidos
+                data.forEach(message => {
+                    var messageElement = document.createElement('div');
+                    messageElement.textContent = message.contenido;
+
+                    // Asignar la clase adecuada según el valor de isFromServer
+                    if (message.isFromServer) {
+                        messageElement.className = 'message server-message';
+                    } else {
+                        messageElement.className = 'message user-message';
+                    }
+
+                    document.getElementById('messages').appendChild(messageElement);
+                });
+
+                // Desplazar el scroll al final del contenedor de mensajes
+                var messagesContainer = document.getElementById('messages');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            })
+            .catch(error => console.error('Error al obtener los mensajes:', error));
+    }
+
+    window.onload = fetchMessages;
+</script>
+
+</body>
+</html>
