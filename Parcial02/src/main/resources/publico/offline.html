@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>One Page Wonder - Start Bootstrap Template</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <style>
+        .registros-container {
+            padding-top: 100px; /* Ajusta el valor según el espacio deseado */
+            padding-bottom: 100px; /* Ajusta el valor según el espacio deseado */        }
+    </style>
+
+</head>
+<body id="page-top">
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+    <div class="container px-5">
+        <a class="navbar-brand" href="#page-top">PUCMM Surveys</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="registro.html">Realizar Registro</a></li>
+                <li class="nav-item"><a class="nav-link" href="verRegistros.html">Registros</a></li>
+                <li class="nav-item"><a class="nav-link" href="verRegistrosNoCargados.html">Registros No Cargados</a></li>
+                <li class="nav-item"><a class="nav-link" href="registrarUsuario.html">Registrarse</a></li>
+                <li class="nav-item"><a class="nav-link" href="login.html">Iniciar Sesion</a></li>
+                <li class="nav-item"><a id="nav-username" class="nav-link" href="#!">Guest</a></li>
+                <li class="nav-item"><a id="connection-status" class="nav-link" href="offline.html">Offline</a></li>            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Header-->
+<header class="masthead text-center text-white">
+    <div class="masthead-content">
+        <div class="container px-5">
+            <!-- Registration Section -->
+            <section class="py-5">
+                <div class="container px-5">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-6">
+                            <div class="card registration-container">
+                                <div class="card-body">
+                                    <h2 class="card-title text-center mb-4">Registro</h2>
+                                    <form id="registroForm">
+                                        <div class="mb-3">
+                                            <label for="exampleInputName" class="form-label">Nombre</label>
+                                            <input type="text" class="form-control" id="exampleInputName" name="nombre" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="exampleInputSector" class="form-label">Sector</label>
+                                            <input type="text" class="form-control" id="exampleInputSector" name="sector" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="exampleInputLevel" class="form-label">Nivel Escolar</label>
+                                            <select class="form-select" id="exampleInputLevel" name="nivelEscolar" required>
+                                                <option value="" disabled selected>Seleccione un nivel escolar</option>
+                                                <option value="Basico">Básico</option>
+                                                <option value="Medio">Medio</option>
+                                                <option value="Grado Universitario">Grado Universitario</option>
+                                                <option value="Postgrado">Postgrado</option>
+                                                <option value="Doctorado">Doctorado</option>
+                                            </select>
+                                        </div>
+                                        <button type="button" class="btn btn-primary" onclick="obtenerUbicacion()" id="obtenerUbicacionBtn">Obtener Ubicación</button>
+                                        <div class="mb-3">
+                                            <label for="exampleInputlatitud" class="form-label">Latitud</label>
+                                            <input type="text" class="form-control" id="exampleInputlatitud" name="latitud" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="exampleInputLongitud" class="form-label">Longitud</label>
+                                            <input type="text" class="form-control" id="exampleInputLongitud" name="longitud" readonly>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-block" id="registrarBtn">Registrarse</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <div class="bg-circle-1 bg-circle"></div>
+    <div class="bg-circle-2 bg-circle"></div>
+    <div class="bg-circle-3 bg-circle"></div>
+    <div class="bg-circle-4 bg-circle"></div>
+</header>
+<!-- Contenedor para registros locales -->
+<div class="registros-container">
+    <div class="container">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Sector</th>
+                    <th>Nivel Escolar</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="registrosBody">
+                <!-- Aquí se mostrarán los registros -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="offline-content">
+    <!-- Aquí va todo el contenido de la página offline.html -->
+</div>
+
+<!-- Footer-->
+<footer class="py-5 bg-black">
+    <div class="container px-5"><p class="m-0 text-center text-white small">Copyright &copy; PUCMM Surveys</p></div>
+</footer>
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var registroForm = document.getElementById('registroForm');
+        var registrarBtn = document.getElementById('registrarBtn');
+
+
+        // Manejar el envío del formulario
+        registroForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Evitar el envío del formulario por defecto
+
+            // Obtener datos del formulario
+            var formData = new FormData(registroForm);
+
+            var registroData = {
+                id: new Date().getTime(), // Generar un ID único (timestamp)
+                nombre: formData.get('nombre'),
+                Sector: formData.get('sector'),
+                NivelEscolar: formData.get('nivelEscolar'),
+                UsuarioRegistrador: localStorage.getItem("username"), // TODO
+                latitud: formData.get('latitud'),
+                longitud: formData.get('longitud'),
+            };
+
+            alert(registroData.latitud);
+            // Almacenar datos en LocalForage
+            localforage.setItem('registro-' + registroData.id, registroData).then(() => {
+                console.log('Registro almacenado correctamente:', registroData);
+                alert("Registro almacenado correctamente");
+                limpiarCamposFormulario();
+                cargarRegistros();
+
+                // Aquí puedes redirigir a otra página, mostrar un mensaje de éxito, etc.
+            }).catch((error) => {
+                console.error('Error al almacenar el registro:', error);
+                // Aquí puedes mostrar un mensaje de error al usuario
+            });
+        });
+    });
+</script>
+
+
+
+<script>
+    function obtenerUbicacion() {
+        if (!!navigator.geolocation) {
+            //Pedimos los datos de geolocalizacion al navegador
+            navigator.geolocation.getCurrentPosition(
+                //Si el navegador entrega los datos de geolocalizacion los imprimimos
+                function (position) {
+                    var latitud =  document.getElementById('exampleInputlatitud');
+                    if(latitud)
+                        latitud.value = position.coords.latitude;
+
+                    var longitud =  document.getElementById('exampleInputLongitud');
+                    if(longitud)
+                        longitud.value = position.coords.longitude;
+                },
+                //Si no los entrega manda un alerta de error
+                function () {
+                    window.alert("Imposible obtener la ubicacion. Habilite los permisos de navegacion.");
+                }
+            );
+        }
+
+    }
+</script>
+
+
+<script>
+    function limpiarCamposFormulario() {
+        document.getElementById('exampleInputName').value = '';
+        document.getElementById('exampleInputSector').value = '';
+        document.getElementById('exampleInputLevel').selectedIndex = 0;
+        document.getElementById('exampleInputlatitud').value = '';
+        document.getElementById('exampleInputLongitud').value = '';
+    }
+
+</script>
+
+
+<script>
+    // Función para cargar y mostrar los registros almacenados
+    function cargarRegistros() {
+        const registrosBody = document.getElementById('registrosBody');
+        registrosBody.innerHTML = ''; // Limpiar la tabla antes de cargar los registros
+
+        // Obtener todos los registros almacenados
+        localforage.iterate((value, key) => {
+            // Check if ID is not undefined before adding the record
+            if (value.nombre !== undefined) {
+                // Crear una nueva fila para cada registro
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${value.id}</td>
+                    <td>${value.nombre}</td>
+                    <td>${value.Sector}</td>
+                    <td>${value.NivelEscolar}</td>
+                    <td><button class="btn btn-danger" onclick="eliminarRegistro(${value.id})">Eliminar</button></td>
+                `;
+                registrosBody.appendChild(newRow);
+            }
+        })
+            .catch(error => {
+                console.error('Error al cargar los registros:', error);
+                // Aquí puedes manejar el error de carga de registros
+            });
+    }
+
+
+
+</script>
+
+
+<script>
+    function eliminarRegistro(id) {
+        localforage.removeItem("registro-"+id)
+            .then(() => {
+                console.log(`Registro con ID ${id} eliminado exitosamente.`);
+                cargarRegistros(); // Recargar los registros
+            })
+            .catch(error => {
+                console.error(`Error al eliminar el registro con ID ${id}:`, error);
+            });
+    }
+</script>

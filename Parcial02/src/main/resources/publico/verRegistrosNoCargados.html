@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Registros Locales</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome icons (free version) -->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+    <link href="css/styles.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background-color: #f8f9fa; /* Color de fondo para la página */
+        }
+
+        .masthead {
+            position: relative;
+            height: 25vh; /* Altura reducida */
+            min-height: 200px; /* Altura mínima */
+            background-color: #343a40;
+            background: radial-gradient(circle, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.8) 100%); /* Fondo de círculos con gradiente radial */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .masthead h1 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 4rem; /* Tamaño de fuente reducido */
+        }
+
+        .registros-container {
+            padding: 50px 0;
+        }
+
+        .registros-container .container {
+            background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco con transparencia */
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        /* Estilos para el texto de la tabla */
+        table {
+            color: #212529; /* Color de texto para la tabla */
+        }
+
+        /* Estilos para los círculos de fondo */
+        .bg-circle {
+            width: 50px; /* Tamaño reducido */
+            height: 50px; /* Tamaño reducido */
+            border-radius: 50%; /* Forma de círculo */
+            background-color: rgba(255, 255, 255, 0.1); /* Color de fondo con transparencia */
+            position: absolute;
+        }
+
+        .bg-circle-1 {
+            top: 10%;
+            left: 5%;
+        }
+
+        .bg-circle-2 {
+            top: 20%;
+            right: 5%;
+        }
+
+        .bg-circle-3 {
+            bottom: 10%;
+            right: 10%;
+        }
+
+        .bg-circle-4 {
+            bottom: 20%;
+            left: 10%;
+        }
+
+    </style>
+</head>
+<body>
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+    <div class="container px-5">
+        <a class="navbar-brand" href="index.html">PUCMM Surveys</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="registro.html">Realizar Registro</a></li>
+                <li class="nav-item"><a class="nav-link" href="verRegistros.html">Registros</a></li>
+                <li class="nav-item"><a class="nav-link" href="verRegistrosNoCargados.html">Registros No Cargados</a></li>
+                <li class="nav-item"><a class="nav-link" href="registrarUsuario.html">Registrarse</a></li>
+                <li class="nav-item"><a class="nav-link" href="login.html">Iniciar Sesion</a></li>
+                <li class="nav-item"><a id="nav-username" class="nav-link" href="#!">Guest</a></li>
+                <li class="nav-item"><a id="connection-status" class="nav-link" href="#!">Offline</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Header-->
+<header class="masthead text-center text-white">
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+    <div class="bg-circle bg-circle-3"></div>
+    <div class="bg-circle bg-circle-4"></div>
+    <h1>Registros Locales</h1>
+</header>
+
+<!-- Contenedor para registros locales -->
+<div class="registros-container">
+    <div class="container">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Sector</th>
+                    <th>Nivel Escolar</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="registrosBody">
+                <!-- Aquí se mostrarán los registros -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap core JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<!-- LocalForage -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+
+<script>
+    // OBTENER DATOS DE USUARIO ACTUAL
+    document.addEventListener("DOMContentLoaded", function() {
+        var usernameNav = document.getElementById("nav-username");
+
+        if(usernameNav)
+            usernameNav.textContent = localStorage.getItem("username");
+
+    });
+</script>
+
+<script>
+    // Función para cargar y mostrar los registros almacenados
+    function cargarRegistros() {
+        const registrosBody = document.getElementById('registrosBody');
+        registrosBody.innerHTML = ''; // Limpiar la tabla antes de cargar los registros
+
+        // Obtener todos los registros almacenados
+        localforage.iterate((value, key) => {
+            // Crear una nueva fila para cada registro
+            if (value.nombre !== undefined)
+            {
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${value.id}</td>
+                    <td>${value.nombre}</td>
+                    <td>${value.Sector}</td>
+                    <td>${value.NivelEscolar}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="modificarRegistro('${value.id}')">Modificar</button>
+                        <button class="btn btn-danger" onclick="eliminarRegistro('${value.id}')">Borrar</button>
+                        <button class="btn btn-success" onclick="cargarRegistro('${value.id}')">Cargar</button>
+                    </td>
+                `;
+                registrosBody.appendChild(newRow);
+            }
+
+        })
+            .catch(error => {
+                console.error('Error al cargar los registros:', error);
+                // Aquí puedes manejar el error de carga de registros
+            });
+    }
+
+    // Cargar los registros al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarRegistros();
+    });
+
+    function eliminarRegistro(id) {
+        localforage.removeItem("registro-"+id)
+            .then(() => {
+                console.log(`Registro con ID ${id} eliminado exitosamente.`);
+                cargarRegistros(); // Recargar los registros
+            })
+            .catch(error => {
+                console.error(`Error al eliminar el registro con ID ${id}:`, error);
+            });
+    }
+</script>
+
+<script>
+    function modificarRegistro(id){
+        localStorage.setItem('registro-act', id);
+        window.location.href = 'editar_registro.html';
+    }
+</script>
+
+<script>
+    function cargarRegistro(id) {
+        event.preventDefault(); // Detener el envío automático del formulario
+
+        var nombre;
+        var sector;
+        var nivelEscolar;
+        var UsuarioRegistrador;
+        var latitud;
+        var longitud;
+
+        // OBTENER DATOS DEL REGISTRO
+        localforage.getItem('registro-' + id).then((registro) => {
+
+            if (registro !== null) {
+                console.log('Registro encontrado:', registro);
+                // Asignar los valores del registro a las variables
+                nombre = registro.nombre;
+                sector = registro.Sector;
+                nivelEscolar = registro.NivelEscolar;
+                UsuarioRegistrador = registro.UsuarioRegistrador;
+                latitud = registro.latitud;
+                longitud = registro.longitud;
+
+                // Crear un objeto XMLHttpRequest
+                var xhttp = new XMLHttpRequest();
+
+                // Configurar la solicitud POST al servidor Java
+                xhttp.open("POST", "/cargarRegistroServidor", true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                // Enviar los datos al servidor Java, incluyendo el estado de la checkbox
+                xhttp.send("nombre=" + nombre
+                    + "&sector=" + sector
+                    + "&nivelEscolar=" + nivelEscolar
+                    + "&UsuarioRegistrador=" + UsuarioRegistrador
+                    + "&latitud=" + latitud
+                    + "&longitud=" + longitud);
+
+                // Escuchar el estado de la solicitud
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState === 4) {
+                        if (this.status === 200) {
+                            eliminarRegistro(id);
+                            // Manejar la respuesta del servidor, si es necesario
+                        } else if (this.status === 404) {
+                            // Manejar errores, si es necesario
+                        }
+                    }
+                };
+
+
+
+            } else {
+                console.log('Registro no encontrado.');
+                alert("Registro no encontrado.");
+
+            }
+        }).catch((error) => {
+            console.error('Error al recuperar el registro:', error);
+            alert("Error al recuperar el registro");
+
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Display a map with marker</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
+    <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+    <style>
+        #map {position: absolute; top: 0; right: 0; bottom: 0; left: 0;}
+    </style>
+</head>
+<body>
+<div id="map">
+    <a href="https://www.maptiler.com" style="position:absolute;left:10px;bottom:10px;z-index:999;"><img src="https://api.maptiler.com/resources/logo.svg" alt="MapTiler logo"></a>
+</div>
+
+<script>
+    // Función para inicializar el mapa
+    function initMap() {
+        console.log('initMap');
+
+        const key = 'zl4T4tiyjjNjfEOhDH1f';
+
+        const attribution = new ol.control.Attribution({
+            collapsible: false,
+        });
+
+        const source = new ol.source.TileJSON({
+            url: `https://api.maptiler.com/maps/streets-v2/tiles.json?key=${key}`, // source URL
+            tileSize: 512,
+            crossOrigin: 'anonymous'
+        });
+
+        const map = new ol.Map({
+            layers: [
+                new ol.layer.Tile({
+                    source: source
+                })
+            ],
+            controls: ol.control.defaults.defaults({attribution: false}).extend([attribution]),
+            target: 'map',
+            view: new ol.View({
+                constrainResolution: true,
+                center: ol.proj.fromLonLat([-70.6909047, 19.4503932]), // starting position [lng, lat]
+                zoom: 7 // starting zoom
+            })
+        });
+
+
+
+
+
+        return map;
+    }
+
+    // Función para agregar un marcador en una ubicación específica
+    function addMarker(map) {
+        console.log('addMarker');
+
+        var registroId = localStorage.getItem("registroId-map");
+        var latitudeString = localStorage.getItem("latitude");
+        var longitudeString = localStorage.getItem("longitud");
+        console.log("ID : " + registroId);
+        console.log("latitudeString : " + latitudeString);
+        console.log("longitudeString : " + longitudeString);
+
+
+        var latitude = parseFloat(latitudeString);
+        var longitude = parseFloat(longitudeString);
+
+
+        const marker = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.fromLonLat([longitude, latitude])) // Set the marker's position
+        });
+
+        const markerStyle = new ol.style.Style({
+            image: new ol.style.Icon({
+                src: 'https://openlayers.org/en/latest/examples/data/icon.png', // URL to the marker icon
+                scale: 0.5 // Adjust the scale of the marker
+            })
+        });
+
+        marker.setStyle(markerStyle);
+
+        const vectorLayer = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                features: [marker]
+            })
+        });
+
+        map.addLayer(vectorLayer);
+
+
+
+
+
+
+
+
+
+
+
+
+        //  var latitudeString = localStorage.getItem("latitude");
+        //var longitudeString = localStorage.getItem("latitude");
+
+        // var latitude = parseFloat(latitudeString);
+        // var longitude = parseFloat(longitudeString);
+
+
+        //var latitude = 19.5556795;
+       // var longitude =  -71.0759018;
+
+
+
+    }
+
+    // Inicializar el mapa
+    const map = initMap();
+
+    // Ejemplo de uso: agregar un marcador en una ubicación específica
+    addMarker(map);
+</script>
+</body>
+</html>

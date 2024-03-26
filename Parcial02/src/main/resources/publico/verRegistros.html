@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Registros</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome icons (free version) -->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+    <link href="css/styles.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background-color: #f8f9fa; /* Color de fondo para la página */
+        }
+
+        .masthead {
+            position: relative;
+            height: 25vh; /* Altura reducida */
+            min-height: 200px; /* Altura mínima */
+            background-color: #343a40;
+            background: radial-gradient(circle, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.8) 100%); /* Fondo de círculos con gradiente radial */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .masthead h1 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 4rem; /* Tamaño de fuente reducido */
+        }
+
+        .registros-container {
+            padding: 50px 0;
+        }
+
+        .registros-container .container {
+            background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco con transparencia */
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        /* Estilos para el texto de la tabla */
+        table {
+            color: #212529; /* Color de texto para la tabla */
+        }
+
+        /* Estilos para los círculos de fondo */
+        .bg-circle {
+            width: 50px; /* Tamaño reducido */
+            height: 50px; /* Tamaño reducido */
+            border-radius: 50%; /* Forma de círculo */
+            background-color: rgba(255, 255, 255, 0.1); /* Color de fondo con transparencia */
+            position: absolute;
+        }
+
+        .bg-circle-1 {
+            top: 10%;
+            left: 5%;
+        }
+
+        .bg-circle-2 {
+            top: 20%;
+            right: 5%;
+        }
+
+        .bg-circle-3 {
+            bottom: 10%;
+            right: 10%;
+        }
+
+        .bg-circle-4 {
+            bottom: 20%;
+            left: 10%;
+        }
+
+    </style>
+</head>
+<body>
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+    <div class="container px-5">
+        <a class="navbar-brand" href="index.html">PUCMM Surveys</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="registro.html">Realizar Registro</a></li>
+                <li class="nav-item"><a class="nav-link" href="verRegistros.html">Registros</a></li>
+                <li class="nav-item"><a class="nav-link" href="verRegistrosNoCargados.html">Registros No Cargados</a></li>
+                <li class="nav-item"><a class="nav-link" href="registrarUsuario.html">Registrarse</a></li>
+                <li class="nav-item"><a class="nav-link" href="login.html">Iniciar Sesion</a></li>
+                <li class="nav-item"><a id="nav-username" class="nav-link" href="#!">Guest</a></li>
+                <li class="nav-item"><a id="connection-status" class="nav-link" href="#!">Offline</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Header-->
+<header class="masthead text-center text-white">
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+    <div class="bg-circle bg-circle-3"></div>
+    <div class="bg-circle bg-circle-4"></div>
+    <h1>Registros</h1>
+</header>
+
+<!-- Contenedor para registros locales -->
+<div class="registros-container">
+    <div class="container">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Sector</th>
+                    <th>Nivel Escolar</th>
+                    <th>Registrador</th>
+                    <th>Latitud</th>
+                    <th>Longitud</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="registrosBody">
+                <!-- Aquí se mostrarán los registros -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap core JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<!-- Script para cargar los registros -->
+<script>
+    fetch('/registros')
+        .then(response => response.json())
+        .then(data => {
+            // Manipular el DOM para mostrar los registros
+            let registrosBody = document.getElementById('registrosBody');
+            data.forEach(registro => {
+                let row = registrosBody.insertRow();
+                row.insertCell().textContent = registro.id;
+                row.insertCell().textContent = registro.nombre;
+                row.insertCell().textContent = registro.Sector;
+                row.insertCell().textContent = registro.NivelEscolar;
+                row.insertCell().textContent = registro.UsuarioRegistrador;
+                row.insertCell().textContent = registro.latitud;
+                row.insertCell().textContent = registro.longitud;
+
+
+
+                // Agregar botón de "Ver en el mapa" con ID de registro
+                let cellAcciones = row.insertCell();
+                let btnVerMapa = document.createElement('button');
+                btnVerMapa.textContent = 'Ver en el mapa';
+                btnVerMapa.classList.add('btn', 'btn-primary', 'btn-sm');
+                btnVerMapa.onclick = function() {
+                    verEnMapa(registro.latitud, registro.longitud); // Función para ver en el mapa con ID de registro
+                };
+                cellAcciones.appendChild(btnVerMapa);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+
+    function verEnMapa(latitud, longitud) {
+        console.log("LATITUD : " + latitud);
+        console.log("LONGITUD : " +  longitud);
+        localStorage.setItem("latitude", latitud);
+        localStorage.setItem("longitud", longitud);
+
+
+
+
+
+        // Aquí puedes agregar la lógica para ver el registro en el mapa
+       // //console.log('Ver en el mapa ID:', registroId);
+       // localStorage.setItem("registroId-map", registroId);
+
+
+
+        window.location.href = "/mapa.html";
+    }
+</script>
+</body>
+</html>

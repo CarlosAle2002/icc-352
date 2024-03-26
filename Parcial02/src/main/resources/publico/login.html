@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>One Page Wonder - Start Bootstrap Template</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+
+</head>
+<body id="page-top">
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+    <div class="container px-5">
+        <a class="navbar-brand" href="#page-top">PUCMM Surveys</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#!">Guest</a></li>
+                <li class="nav-item"><a id="connection-status" class="nav-link" href="#!">Offline</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Header-->
+<header class="masthead text-center text-white">
+    <div class="masthead-content">
+        <div class="container px-5">
+            <!-- Login Section -->
+            <section class="py-5">
+                <div class="container px-5">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-6">
+                            <div class="login-container">
+                                <h2 class="text-center mb-4">Iniciar Sesión</h2>
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="usernameID" class="form-label">Nombre de Usuario</label>
+                                        <input type="text" class="form-control" id="usernameID" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="passwordID" class="form-label">Contraseña</label>
+                                        <input type="password" class="form-control" id="passwordID" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-block" onclick="LogIn()">Iniciar Sesión</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <div class="bg-circle-1 bg-circle"></div>
+    <div class="bg-circle-2 bg-circle"></div>
+    <div class="bg-circle-3 bg-circle"></div>
+    <div class="bg-circle-4 bg-circle"></div>
+</header>
+<!-- Footer-->
+<footer class="py-5 bg-black">
+    <div class="container px-5"><p class="m-0 text-center text-white small">Copyright &copy; PUCMM Surveys</p></div>
+</footer>
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+    // OBTENER DATOS DE USUARIO ACTUAL
+    document.addEventListener("DOMContentLoaded", function() {
+        var usernameNav = document.getElementById("nav-username");
+
+        if(usernameNav)
+            usernameNav.textContent = localStorage.getItem("username");
+
+    });
+</script>
+
+
+<script>
+    function LogIn() {
+        event.preventDefault(); // Detener el envío automático del formulario
+
+        var username = document.getElementById("usernameID").value;
+        var password = document.getElementById("passwordID").value;
+
+        // Crear un objeto XMLHttpRequest
+        var xhttp = new XMLHttpRequest();
+
+
+        // Configurar la solicitud POST al servidor Java
+        xhttp.open("POST", "/login", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        // Enviar los datos al servidor Java, incluyendo el estado de la checkbox
+        xhttp.send("username=" + username + "&password=" + password);
+
+        // Escuchar el estado de la solicitud
+        xhttp.onreadystatechange = function () {
+            if (this.readyState === 4) {
+                if (this.status === 200) {
+
+                    // Actualizar datos guardados
+                    localStorage.setItem('username', username);
+
+                    // WED STORAGE - LOG DE LOGINS EXITOSOS
+                    almacenarInicioSesion(username);
+
+                    // Redireccionar
+                    window.location.href = "/index.html";
+
+                } else if (this.status === 404) {
+                    // Usuario no existe
+                    alert("Usuario no válido. Intente nuevamente.");
+                }
+            }
+        }
+
+    }
+</script>
+
+<script>
+    // Función para almacenar el registro de inicio de sesión
+    function almacenarInicioSesion(username) {
+        // Función para obtener la fecha actual en formato ISO
+        const getCurrentDate = () => new Date().toISOString();
+
+        const registroInicioSesion = {
+            id: new Date().getTime(),
+            username,
+            fechaInicio: getCurrentDate(),
+        };
+
+        // Almacenar datos en LocalForage
+        localforage.setItem('inicioSesion-' + registroInicioSesion.id, registroInicioSesion)
+            .then(() => {
+                console.log('Registro de inicio de sesión almacenado correctamente.');
+                mostrarRegistrosInicioSesion(); // Solo para ver los registros
+            })
+            .catch((error) => {
+                console.error('Error al almacenar el registro de inicio de sesión:', error);
+            });
+    }
+</script>
+
+<script>
+    function mostrarRegistrosInicioSesion() {
+        // Obtener todos los registros de inicio de sesión almacenados en LocalForage
+        localforage.keys().then(function(keys) {
+            // Filtrar solo los registros de inicio de sesión
+            var inicioSesionKeys = keys.filter(function(key) {
+                return key.startsWith('inicioSesion-');
+            });
+
+            // Recorrer cada clave de inicio de sesión para obtener los datos
+            inicioSesionKeys.forEach(function(key) {
+                localforage.getItem(key).then(function(registro) {
+                    // Mostrar el registro de inicio de sesión en la consola o en la interfaz de usuario
+                    console.log('Registro de inicio de sesión:', registro);
+                    // Aquí puedes agregar código para mostrar los registros en la interfaz de usuario
+                }).catch(function(error) {
+                    console.error('Error al obtener el registro de inicio de sesión:', error);
+                });
+            });
+        }).catch(function(error) {
+            console.error('Error al obtener las claves de LocalForage:', error);
+        });
+    }
+
+</script>
+</body>
+</html>
